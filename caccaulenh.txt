@@ -1,0 +1,44 @@
+1. ssh trên máy cá nhân
+ssh -i quan_server.pem ubuntu@16.176.96.171
+2. đăng nhập ubuntu và tạo user deploy2
+sudo adduser deploy2
+sudo usermod -aG sudo deploy2
+
+sudo mkdir -p /home/deploy2/.ssh
+sudo cp /home/ubuntu/.ssh/authorized_keys /home/deploy2/.ssh/authorized_keys
+sudo chown -R deploy2:deploy2 /home/deploy2/.ssh
+sudo chmod 700 /home/deploy2/.ssh
+sudo chmod 600 /home/deploy2/.ssh/authorized_keys
+3. đăng nhập lại user deploy2 sang cmd khác
+ssh -i quan_server.pem deploy2@16.176.96.171
+
+4. cài docker
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo usermod -aG docker deploy2
+exit
+
+5. đăng nhập lại
+ssh -i quan_server.pem ubuntu@16.176.96.171
+docker --version
+docker compose version
+docker ps
+
+6. tạo dự án và chạy
+mkdir ~/ecommerce-app
+cd ~/ecommerce-app
+nano .env  
+nano docker-compose.yml
+docker compose up -d
+docker compose ps
+curl -I localhost
+
+7. UFW
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow 22/tcp
+sudo ufw allow 80/tcp
+sudo ufw enable
+sudo ufw status verbose
+
+// sửa /etc/ssh/sshd_config thành PermitRootLogin no và PasswordAuthentication no
